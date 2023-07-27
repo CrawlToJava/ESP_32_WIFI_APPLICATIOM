@@ -9,5 +9,7 @@
 #include "nvs_flash.h"
 #include "driver/gpio.h"
 #include "rgb_led.h"
+#include "nvs_flash.h"
+#include "wifi_app.h"
 
 #endif
