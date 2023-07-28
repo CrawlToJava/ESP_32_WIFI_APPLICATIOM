@@ -1,4 +1,5 @@
 #include "wifi_app.h"
+#include "http_server.h"
 
 #include "freertos/event_groups.h" // Библиотека отвечающая за обработку событий
 #include "freertos/task.h"
@@ -128,7 +129,7 @@ static void wifi_app_soft_ap_config(void)
         };
 
     // Configure DHCP for the AP
-    esp_netif_ip_info_t ap_ip_info; // В данную структуру происходит запись параметров
+    esp_netif_ip_info_t ap_ip_info;                // В данную структуру происходит запись параметров
     memset(&ap_ip_info, 0x00, sizeof(ap_ip_info)); // Функция обеспечивает устнановку всех байтов структуры в ноль, перед записью значений
     /**
      * Этот вызов останавливает DHCP сервер, который обслуживает точку доступа.
@@ -182,6 +183,7 @@ static void wifi_app_task(void *pvParametr)
             {
             case WIFI_APP_MSG_START_HTTP_SERVER:
                 ESP_LOGI(TAG, "WIFI_APP_MSG_START_HTTP_SERVER");
+                http_server_start();
                 rgb_led_http_server_started();
                 break;
             case WIFI_APP_MSG_CONNECTING_FROM_HTTP_SERVER:
