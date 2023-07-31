@@ -35,7 +35,17 @@ h4 {
 }
 #latest_firmware {
 	color: #1d3557;
-}	
+}
+
+#temperature_reading {
+	display:inline;
+	color: #1d3557;
+}
+
+#humidity_reading {
+	display:inline;
+	color: #1d3557;
+}
 
 .buttons {
     padding: 5px;

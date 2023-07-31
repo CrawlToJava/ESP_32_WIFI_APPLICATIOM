@@ -7,6 +7,7 @@
 #include "http_server.h"
 #include "tasks_common.h"
 #include "wifi_app.h"
+#include "dht11.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
@@ -305,7 +306,7 @@ esp_err_t http_server_OTA_update_handler(httpd_req_t *req)
 /**
  * OTA status handler response with the firmware update status after the OTA update is started
  * and responds with the compile time/date when is page is first requested
- * @param req HTTP request for wich the uri needs to be handled
+ * @param req HTTP request for which the uri needs to be handled
  * @return ESP_OK
  */
 esp_err_t http_server_OTA_status_handler(httpd_req_t *req)
@@ -318,6 +319,25 @@ esp_err_t http_server_OTA_status_handler(httpd_req_t *req)
 
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req, otaJSON, strlen(otaJSON));
+
+    return ESP_OK;
+}
+
+/**
+ * DHT sensor readings JSON handler responds with DHT22 sensor data
+ * @param req HTTP request for which the uri needs to be handled
+ * @return ESP_OK
+ */
+static esp_err_t http_server_get_dht_sensor_readings_json_handler(httpd_req_t *req)
+{
+    ESP_LOGI(TAG, "/dhtSensor.json requested");
+
+    char dhtSensorJSON[100];
+
+    sprintf(dhtSensorJSON, "{\"temp\":\"%d\",\"humidity\":\"%d\"}", DHT11_read().temperature, DHT11_read().humidity);
+
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_send(req, dhtSensorJSON, strlen(dhtSensorJSON));
 
     return ESP_OK;
 }
@@ -419,6 +439,15 @@ static httpd_handle_t http_server_configure(void)
             .user_ctx = NULL};
 
         httpd_register_uri_handler(http_server_handle, &OTA_status);
+
+        // register dhtSensor.json handler
+        httpd_uri_t dht_sensor_json = {
+            .uri = "/dhtSensor.json",
+            .method = HTTP_GET,
+            .handler = http_server_get_dht_sensor_readings_json_handler,
+            .user_ctx = NULL};
+
+        httpd_register_uri_handler(http_server_handle, &dht_sensor_json);
 
         return http_server_handle;
     }
