@@ -11,5 +11,6 @@
 #include "rgb_led.h"
 #include "nvs_flash.h"
 #include "wifi_app.h"
+#include "dht11.h"
 
 #endif
